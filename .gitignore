@@ -80,10 +80,16 @@ target/
 
 ### Django ###
 *.log
+
 *.pot
+
 *.pyc
-*.cpython-37.pyc
-__pycache__/
+
+*/*/*/__pycache__/
+
+*/*/__pycache__/
+
+*/__pycache__/
 local_settings.py
 
 .env

@@ -23,8 +23,8 @@ class CancelSubscriptionView(LoginRequiredMixin, FormView):
 
         stripe_subscription_id = form.cleaned_data.get('subscription_id')
         subscription_stripe = stripe.Subscription.retrieve(
-            stripe_subscription_id
-        )
+            stripe_subscription_id)
+
         subscription_stripe.delete()
 
         subscription = Subscription.objects.get(
@@ -56,15 +56,18 @@ class CreateSubscriptionView(LoginRequiredMixin, FormView):
                 },
             ]
         )
-        ends_at = datetime.utcfromtimestamp(
-            int(subscription_stripe.current_period_end)).strftime('%Y-%m-%d %H:%M:%S')
+        ends_at = (
+            datetime
+            .utcfromtimestamp(
+                int(subscription_stripe.current_period_end))
+            .strftime('%Y-%m-%d %H:%M:%S')
+        )
 
         subscription = Subscription(
             plan=Plan.objects.get(stripe_plan_id=plan_id),
             profile=self.request.user.profile,
             ends_at=ends_at,
-            stripe_subscription_id=subscription_stripe.id
-		)
+            stripe_subscription_id=subscription_stripe.id)
 
         subscription.save()
 

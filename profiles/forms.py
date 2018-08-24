@@ -1,11 +1,11 @@
+import stripe
+
 from django import forms
 from django.conf import settings
-
 from django.contrib.auth.models import User
 
 from .models import Profile
 
-import stripe
 
 
 class SignupForm(forms.Form):
@@ -48,9 +48,14 @@ class SignupForm(forms.Form):
         widget=forms.HiddenInput())
 
     def clean_username(self):
+
         username = self.cleaned_data["username"]
 
-        username_exists = User.objects.filter(username=username).exists()
+        username_exists = (
+            User
+            .objects
+            .filter(username=username)
+            .exists())
 
         if username_exists:
             raise forms.ValidationError("Username is alreade taken")
@@ -82,6 +87,7 @@ class SignupForm(forms.Form):
             email=data["email"])
 
         stripe.api_key = settings.STRIPE_SECRET_KEY
+
         stripe_customer = stripe.Customer.create(
             source=data["stripe_token"],
             email=data["email"])

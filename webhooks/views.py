@@ -1,3 +1,6 @@
+import json
+from datetime import datetime
+
 from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -7,8 +10,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 from plans.models import Subscription
 
-from datetime import datetime
-import json
 
 # Create your views here.
 
