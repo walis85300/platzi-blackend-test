@@ -4,89 +4,87 @@ from django.contrib.auth.models import User
 
 from .models import Profile
 
+
 class SignupForm(forms.Form):
 
-	username = forms.CharField(
-		max_length=150, 
-		required=True
-	)
+    username = forms.CharField(
+        max_length=150,
+        required=True
+    )
 
-	password = forms.CharField(
-		max_length=128,
-		required=True
-	)
+    password = forms.CharField(
+        max_length=128,
+        required=True
+    )
 
-	password_confirmation = forms.CharField(
-		max_length=128,
-		required=True
-	)
+    password_confirmation = forms.CharField(
+        max_length=128,
+        required=True
+    )
 
-	first_name = forms.CharField(
-		max_length=150,
-		required=True
-	)
-	last_name = forms.CharField(
-		max_length=150,
-		required=True
-	)
+    first_name = forms.CharField(
+        max_length=150,
+        required=True
+    )
+    last_name = forms.CharField(
+        max_length=150,
+        required=True
+    )
 
-	email = forms.CharField(
-		max_length=150,
-		required=True
-	)
+    email = forms.CharField(
+        max_length=150,
+        required=True
+    )
 
-	website = forms.CharField(
-		max_length=150,
-		required=True
-	)
+    website = forms.CharField(
+        max_length=150,
+        required=True
+    )
 
-	phone_number = forms.CharField(
-		max_length=10,
-		required=True
-	)
+    phone_number = forms.CharField(
+        max_length=10,
+        required=True
+    )
 
-	def clean_username(self):
-		username = self.cleaned_data['username']
+    def clean_username(self):
+        username = self.cleaned_data['username']
 
-		username_exists = User.objects.filter(username=username).exists()
+        username_exists = User.objects.filter(username=username).exists()
 
-		if username_exists:
-			raise forms.ValidationError('Username is alreade taken')
+        if username_exists:
+            raise forms.ValidationError('Username is alreade taken')
 
-		return username
+        return username
 
-	def clean(self):
-		data = super().clean()
+    def clean(self):
+        data = super().clean()
 
-		password = data['password']
-		password_confirmation = data['password_confirmation']
+        password = data['password']
+        password_confirmation = data['password_confirmation']
 
-		if password != password_confirmation:
-			raise forms.ValidationError('Password and Password confirmation does not match')
+        if password != password_confirmation:
+            raise forms.ValidationError(
+                'Password and Password confirmation does not match')
 
-		return data
+        return data
 
-	def save(self):
-		data = self.cleaned_data
+    def save(self):
+        data = self.cleaned_data
 
-		data.pop('password_confirmation')
+        data.pop('password_confirmation')
 
-		user = User.objects.create_user(
-			username=data['username'],
-			first_name=data['first_name'],
-			last_name=data['last_name'],
-			password=data['password'],
-			email=data['email'],
-		)
+        user = User.objects.create_user(
+            username=data['username'],
+            first_name=data['first_name'],
+            last_name=data['last_name'],
+            password=data['password'],
+            email=data['email'],
+        )
 
-		profile = Profile(
-			user=user,
-			website=data['website'],
-			phone_number=data['phone_number']
-		)
+        profile = Profile(
+            user=user,
+            website=data['website'],
+            phone_number=data['phone_number']
+        )
 
-		profile.save()
-
-
-
-
+        profile.save()

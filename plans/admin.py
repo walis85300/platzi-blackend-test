@@ -4,10 +4,11 @@ from .models import Plan
 
 # Register your models here.
 
+
 @admin.register(Plan)
 class PlanAdmin(admin.ModelAdmin):
-	list_display = (
-		'pk',
-		'description',
-		'price'
-	)
+    list_display = (
+        'pk',
+        'description',
+        'price'
+    )

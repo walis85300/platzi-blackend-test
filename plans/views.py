@@ -2,6 +2,7 @@ from datetime import datetime
 import os
 import stripe
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -18,7 +19,7 @@ class CancelSubscriptionView(LoginRequiredMixin, FormView):
     form_class = CancelSubscriptionForm
 
     def form_valid(self, form):
-        stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
+        stripe.api_key = settings.STRIPE_SECRET_KEY
 
         stripe_subscription_id = form.cleaned_data.get('subscription_id')
         subscription_stripe = stripe.Subscription.retrieve(
@@ -44,7 +45,7 @@ class CreateSubscriptionView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
 
-        stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
+        stripe.api_key = settings.STRIPE_SECRET_KEY
         plan_id = form.cleaned_data.get('plan_id')
 
         subscription_stripe = stripe.Subscription.create(
@@ -66,8 +67,5 @@ class CreateSubscriptionView(LoginRequiredMixin, FormView):
 		)
 
         subscription.save()
-
-        # import pdb; pdb.set_trace()
-        # print(subscription.billing)
 
         return super().form_valid(form)

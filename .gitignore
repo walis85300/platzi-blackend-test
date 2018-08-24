@@ -82,8 +82,12 @@ target/
 *.log
 *.pot
 *.pyc
+*.cpython-37.pyc
 __pycache__/
 local_settings.py
 
 .env
 db.sqlite3
+
+subscription-created.json
+subscription-deleted.json
