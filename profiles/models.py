@@ -9,7 +9,7 @@ class Profile(models.Model):
 
 	website = models.CharField(max_length=150, null=True)
 	phone_number = models.CharField(max_length=10, null=True)
-
+	stripe_user_id = models.CharField(max_length=20, null=True)
 
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)

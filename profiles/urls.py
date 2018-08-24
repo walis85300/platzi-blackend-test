@@ -19,6 +19,11 @@ urlpatterns = [
 	),
 
 	path(
+		route='me',
+		view=views.MeProfileView.as_view(),
+		name='me_profile'
+	),
+	path(
 		route='profile/update',
 		view=views.UpdateProfileView.as_view(),
 		name='update'
