@@ -80,7 +80,31 @@ def customer_subscription_deleted(request):
 	return
 
 
+def invoice_payment_succeeded(request):
+	if request["billing_reason"] == "subscription_update":
+		subscription = Subscription.objects.get(
+                    stripe_subscription_id=request["subscription"]
+				)
+		ends_at = request["period_end"]
+
+		subscription.is_active = True
+		subscription.ends_at = ends_at
+		subscription.save()
+
+		send_mail(
+			"Subscription created",
+			"Your subscription was updated and still active",
+			"from@from.dev",
+			[subscription.profile.user.email],
+			fail_silently=False,
+		)
+
+	return
+
+
+
 dispatch = {
 	"customer_subscription_created": customer_subscription_created,
 	"customer_subscription_deleted": customer_subscription_deleted,
+	'invoice_payment_succeeded': invoice_payment_succeeded
 }
