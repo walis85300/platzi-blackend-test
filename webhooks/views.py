@@ -18,93 +18,92 @@ from plans.models import Subscription
 @csrf_exempt
 def webhook_dispatcher(request):
 
-	event_json = json.load(request)
+    event_json = json.load(request)
 
-	event_name = event_json["type"].replace(".", "_")
+    event_name = event_json["type"].replace(".", "_")
 
-	if event_name in dispatch:
-		dispatch[event_name](event_json["data"]["object"])
-		return HttpResponse(status=200)
-	else:
-		return HttpResponse(status=404)
+    if event_name in dispatch:
+        dispatch[event_name](event_json["data"]["object"])
+        return HttpResponse(status=200)
+    else:
+        return HttpResponse(status=404)
 
 
 def customer_subscription_created(request):
-	subscription = Subscription.objects.get(
-		stripe_subscription_id=request["id"]
-	)
+    subscription = Subscription.objects.get(
+        stripe_subscription_id=request["id"]
+    )
 
-	if request["status"] == "active":
-		ends_at = request["current_period_end"]
+    if request["status"] == "active":
+        ends_at = request["current_period_end"]
 
-		subscription.is_active = True
-		subscription.ends_at = ends_at
-		subscription.save()
+        subscription.is_active = True
+        subscription.ends_at = ends_at
+        subscription.save()
 
-		send_mail(
-			"Subscription created",
-			"Your subscription was created and is active",
-			"from@from.dev",
-			[subscription.profile.user.email],
-			fail_silently=False,
-		)
+        send_mail(
+            "Subscription created",
+            "Your subscription was created and is active",
+            "from@from.dev",
+            [subscription.profile.user.email],
+            fail_silently=False,
+        )
 
-	return
+    return
 
 
 def customer_subscription_deleted(request):
-	subscription = Subscription.objects.get(
-		stripe_subscription_id=request["id"]
-	)
+    subscription = Subscription.objects.get(
+        stripe_subscription_id=request["id"]
+    )
 
-	if request["status"] == "canceled":
+    if request["status"] == "canceled":
 
-		canceled_at = (
-			datetime
-			.utcfromtimestamp(int(request["canceled_at"]))
-			.strftime('%Y-%m-%d %H:%M:%S')
-		)
+        canceled_at = (
+            datetime
+            .utcfromtimestamp(int(request["canceled_at"]))
+            .strftime('%Y-%m-%d %H:%M:%S')
+        )
 
-		subscription.is_active = False
-		subscription.canceled_at = canceled_at
-		subscription.save()
+        subscription.is_active = False
+        subscription.canceled_at = canceled_at
+        subscription.save()
 
-		send_mail(
-			"Subscription canceled",
-			"Your subscription was canceled",
-			"from@from.dev",
-			[subscription.profile.user.email],
-			fail_silently=False,
-		)
+        send_mail(
+            "Subscription canceled",
+            "Your subscription was canceled",
+            "from@from.dev",
+            [subscription.profile.user.email],
+            fail_silently=False,
+        )
 
-	return
+    return
 
 
 def invoice_payment_succeeded(request):
-	if request["billing_reason"] == "subscription_update":
-		subscription = Subscription.objects.get(
-                    stripe_subscription_id=request["subscription"]
-				)
-		ends_at = request["period_end"]
+    if request["billing_reason"] == "subscription_update":
+        subscription = Subscription.objects.get(
+            stripe_subscription_id=request["subscription"]
+        )
+        ends_at = request["period_end"]
 
-		subscription.is_active = True
-		subscription.ends_at = ends_at
-		subscription.save()
+        subscription.is_active = True
+        subscription.ends_at = ends_at
+        subscription.save()
 
-		send_mail(
-			"Subscription created",
-			"Your subscription was updated and still active",
-			"from@from.dev",
-			[subscription.profile.user.email],
-			fail_silently=False,
-		)
+        send_mail(
+            "Subscription created",
+            "Your subscription was updated and still active",
+            "from@from.dev",
+            [subscription.profile.user.email],
+            fail_silently=False,
+        )
 
-	return
-
+    return
 
 
 dispatch = {
-	"customer_subscription_created": customer_subscription_created,
-	"customer_subscription_deleted": customer_subscription_deleted,
-	'invoice_payment_succeeded': invoice_payment_succeeded
+    "customer_subscription_created": customer_subscription_created,
+    "customer_subscription_deleted": customer_subscription_deleted,
+    'invoice_payment_succeeded': invoice_payment_succeeded
 }
