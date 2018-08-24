@@ -12,49 +12,40 @@ class SignupForm(forms.Form):
 
     username = forms.CharField(
         max_length=150,
-        required=True
-    )
+        required=True)
 
     password = forms.CharField(
         max_length=128,
         required=True,
-        widget=forms.PasswordInput()
-    )
+        widget=forms.PasswordInput())
 
     password_confirmation = forms.CharField(
         max_length=128,
         required=True,
-        widget=forms.PasswordInput()
-    )
+        widget=forms.PasswordInput())
 
     first_name = forms.CharField(
         max_length=150,
-        required=True
-    )
+        required=True)
     last_name = forms.CharField(
         max_length=150,
-        required=True
-    )
+        required=True)
 
     email = forms.CharField(
         max_length=150,
-        required=True
-    )
+        required=True)
 
     website = forms.CharField(
         max_length=150,
-        required=True
-    )
+        required=True)
 
     phone_number = forms.CharField(
         max_length=10,
-        required=True
-    )
+        required=True)
 
     stripe_token = forms.CharField(
-        max_length=30, 
-        widget=forms.HiddenInput()
-    )
+        max_length=30,
+        widget=forms.HiddenInput())
 
     def clean_username(self):
         username = self.cleaned_data["username"]
@@ -88,19 +79,17 @@ class SignupForm(forms.Form):
             first_name=data["first_name"],
             last_name=data["last_name"],
             password=data["password"],
-            email=data["email"],
-        )
+            email=data["email"])
+
         stripe.api_key = settings.STRIPE_SECRET_KEY
         stripe_customer = stripe.Customer.create(
             source=data["stripe_token"],
-            email=data["email"]
-        )
+            email=data["email"])
 
         profile = Profile(
             user=user,
             website=data["website"],
             phone_number=data["phone_number"],
-            stripe_user_id=stripe_customer.id
-        )
+            stripe_user_id=stripe_customer.id)
 
         profile.save()

@@ -20,7 +20,16 @@ from webhooks import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('users/', include( ('profiles.urls', 'profiles'), namespace='profiles' )),
-    path('plans/', include( ('plans.urls', 'plans'), namespace='plans' )),
-    path('stripe/webhooks/', views.webhook_dispatcher, name="webhook-dispatcher")
+    
+    path('users/', 
+        include(('profiles.urls', 'profiles'), 
+        namespace='profiles')),
+
+    path('plans/', 
+        include(('plans.urls', 'plans'), 
+        namespace='plans')),
+
+    path('stripe/webhooks/', 
+        views.webhook_dispatcher,
+        name="webhook-dispatcher")
 ]

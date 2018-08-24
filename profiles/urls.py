@@ -5,32 +5,31 @@ urlpatterns = [
     path(
         route='login/',
         view=views.LoginUserView.as_view(),
-        name='login'
-    ),
+        name='login'),
+
     path(
         route='logout/',
         view=views.LogoutUserView.as_view(),
-        name='logout'
-    ),
+        name='logout'),
+
     path(
         route='signup/',
         view=views.SignupUserView.as_view(),
-        name='signup'
-    ),
+        name='signup'),
+
 
     path(
         route='me',
         view=views.MeProfileView.as_view(),
-        name='me_profile'
-    ),
+        name='me_profile'),
+
     path(
         route='profile/update',
         view=views.UpdateProfileView.as_view(),
-        name='update'
-    ),
+        name='update'),
+
     path(
         route='<str:username>/',
         view=views.DetailProfileView.as_view(),
-        name='detail'
-    )
+        name='detail')
 ]

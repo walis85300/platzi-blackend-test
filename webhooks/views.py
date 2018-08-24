@@ -34,8 +34,11 @@ def customer_subscription_created(request):
 	)
 
 	if request["status"] == "active":
-		ends_at = datetime.utcfromtimestamp(
-			int(request["current_period_end"])).strftime('%Y-%m-%d %H:%M:%S')
+		ends_at = (
+			datetime
+			.utcfromtimestamp(int(request["current_period_end"]))
+			.strftime('%Y-%m-%d %H:%M:%S')
+		)
 
 		subscription.is_active = True
 		subscription.ends_at = ends_at
@@ -58,8 +61,12 @@ def customer_subscription_deleted(request):
 	)
 
 	if request["status"] == "canceled":
-		canceled_at = datetime.utcfromtimestamp(
-			int(request["canceled_at"])).strftime('%Y-%m-%d %H:%M:%S')
+
+		canceled_at = (
+			datetime
+			.utcfromtimestamp(int(request["canceled_at"]))
+			.strftime('%Y-%m-%d %H:%M:%S')
+		)
 
 		subscription.is_active = False
 		subscription.canceled_at = canceled_at
