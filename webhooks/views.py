@@ -35,11 +35,7 @@ def customer_subscription_created(request):
 	)
 
 	if request["status"] == "active":
-		ends_at = (
-			datetime
-			.utcfromtimestamp(int(request["current_period_end"]))
-			.strftime('%Y-%m-%d %H:%M:%S')
-		)
+		ends_at = request["current_period_end"]
 
 		subscription.is_active = True
 		subscription.ends_at = ends_at

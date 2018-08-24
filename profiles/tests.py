@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 # Create your tests here.
 
 
-class LoginTest(TestCase):
+class ProfilesTest(TestCase):
 
     def SetUp(self):
         self.client = Client()

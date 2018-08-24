@@ -1,4 +1,5 @@
 from datetime import datetime
+
 import os
 import stripe
 
@@ -6,6 +7,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.generic import FormView
 
 from .forms import CancelSubscriptionForm, CreateSubscriptionForm
@@ -31,7 +33,7 @@ class CancelSubscriptionView(LoginRequiredMixin, FormView):
             stripe_subscription_id=stripe_subscription_id)
 
         subscription.is_active = False
-        subscription.canceled_at = datetime.now()
+        subscription.canceled_at = timezone.now()
         subscription.save()
 
         messages.success(self.request, 'Subscription has been canceled')
@@ -56,12 +58,7 @@ class CreateSubscriptionView(LoginRequiredMixin, FormView):
                 },
             ]
         )
-        ends_at = (
-            datetime
-            .utcfromtimestamp(
-                int(subscription_stripe.current_period_end))
-            .strftime('%Y-%m-%d %H:%M:%S')
-        )
+        ends_at = subscription_stripe.current_period_end
 
         subscription = Subscription(
             plan=Plan.objects.get(stripe_plan_id=plan_id),
@@ -70,5 +67,7 @@ class CreateSubscriptionView(LoginRequiredMixin, FormView):
             stripe_subscription_id=subscription_stripe.id)
 
         subscription.save()
+
+        messages.success(self.request, 'You are subscribed now, wait for email')
 
         return super().form_valid(form)
